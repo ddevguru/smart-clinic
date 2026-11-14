@@ -1,0 +1,189 @@
+name: Smart Clinic OS — Enterprise CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop, release/* ]
+  pull_request:
+    branches: [ main, develop ]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # -------------------------------------------------------------
+  # Job 1: Backend Quality, Security & Concurrency Test Suite
+  # -------------------------------------------------------------
+  backend-test:
+    name: Backend API & Database Hardening Tests
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: smart_clinic_os
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: Install Root & Server Dependencies
+        run: |
+          npm ci
+          cd server && npm ci
+
+      - name: Run Database Migrations & Seeds
+        env:
+          DATABASE_URL: postgresql://postgres:password@localhost:5432/smart_clinic_os
+          NODE_ENV: test
+        run: |
+          cd server
+          node src/scripts/run_migrations.js
+          node src/scripts/seed_production.js
+
+      - name: Verify Query Execution Plans & Indexes
+        env:
+          DATABASE_URL: postgresql://postgres:password@localhost:5432/smart_clinic_os
+        run: |
+          cd server
+          node src/verify_query_plans.js
+
+      - name: Run Security & Boundary Audit Suite
+        env:
+          DATABASE_URL: postgresql://postgres:password@localhost:5432/smart_clinic_os
+          PORT: 5000
+          JWT_SECRET: production_secure_jwt_secret_key_smart_clinic_os
+        run: |
+          node server/src/server.js &
+          sleep 3
+          node server/test/security_audit.test.js
+
+      - name: Run Concurrency & Data Integrity Suite
+        env:
+          DATABASE_URL: postgresql://postgres:password@localhost:5432/smart_clinic_os
+        run: |
+          node server/test/concurrency_integrity.test.js
+
+      - name: Run 24-Step End-to-End Ecosystem Verification
+        env:
+          DATABASE_URL: postgresql://postgres:password@localhost:5432/smart_clinic_os
+        run: |
+          node server/test/full_e2e_journey.test.js
+
+  # -------------------------------------------------------------
+  # Job 2: Frontend Next.js Production Build
+  # -------------------------------------------------------------
+  frontend-build:
+    name: Frontend Portal Production Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Validate Next.js Build
+        env:
+          NEXT_PUBLIC_API_URL: https://api.smartclinicos.in
+          NEXT_PUBLIC_SOCKET_URL: https://api.smartclinicos.in
+        run: npm run build
+
+  # -------------------------------------------------------------
+  # Job 3: Flutter Patient Mobile App Verification
+  # -------------------------------------------------------------
+  flutter-verify:
+    name: Flutter Patient Android Verification
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Setup Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Flutter SDK
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.x'
+          channel: 'stable'
+          cache: true
+
+      - name: Install Flutter Packages
+        run: |
+          cd patient_app
+          flutter pub get
+
+      - name: Run Flutter Static Analysis
+        run: |
+          cd patient_app
+          flutter analyze --no-fatal-infos
+
+  # -------------------------------------------------------------
+  # Job 4: Container Build Verification
+  # -------------------------------------------------------------
+  docker-build:
+    name: Docker Image Build & Sanity Verification
+    runs-on: ubuntu-latest
+    needs: [backend-test, frontend-build]
+
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Backend Docker Image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile.backend
+          push: false
+          tags: smartclinicos/backend:latest
+
+      - name: Build Frontend Docker Image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile.frontend
+          push: false
+          tags: smartclinicos/frontend:latest
+

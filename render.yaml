@@ -1,0 +1,70 @@
+# ==============================================================================
+# SMART CLINIC OS — RENDER BLUEPRINT SPECIFICATION (render.yaml)
+# Production Infrastructure as Code: Database + Express Backend + Next.js Admin
+# ==============================================================================
+
+databases:
+  - name: smart-clinic-db
+    databaseName: smart_clinic_os
+    user: smart_clinic_user
+    plan: free
+    region: oregon
+    ipAllowList: [] # Allow connections (authenticated via user/password)
+
+services:
+  # ----------------------------------------------------------------------------
+  # 1. Express REST API & Realtime Backend Service (Node.js)
+  # ----------------------------------------------------------------------------
+  - type: web
+    name: smart-clinic-backend
+    runtime: node
+    plan: free
+    region: oregon
+    rootDir: server
+    buildCommand: npm install
+    startCommand: node src/server.js
+    healthCheckPath: /api/v1/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 5000
+      - key: DATABASE_URL
+        fromDatabase:
+          name: smart-clinic-db
+          property: connectionString
+      - key: JWT_SECRET_KEY
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      - key: DB_POOL_MAX
+        value: 10
+      - key: STORAGE_DIR
+        value: ./storage
+      - key: CORS_ORIGIN
+        value: '*'
+
+  # ----------------------------------------------------------------------------
+  # 2. Next.js Web Application — Super Admin & Location Admin Consoles
+  # ----------------------------------------------------------------------------
+  - type: web
+    name: smart-clinic-web
+    runtime: node
+    plan: free
+    region: oregon
+    buildCommand: npm install && npm run build
+    startCommand: npm run start
+    healthCheckPath: /
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+      - key: INTERNAL_BACKEND_URL
+        fromService:
+          type: web
+          name: smart-clinic-backend
+          property: host
+      - key: NEXT_PUBLIC_API_URL
+        value: /api/v1
+

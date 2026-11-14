@@ -1,0 +1,48 @@
+# Dependencies
+node_modules/
+*/node_modules/
+server/node_modules/
+.pnp
+.pnp.js
+
+# Next.js Build Output
+.next/
+out/
+
+# Environment Variables & Secrets (Keep .env.production.example for reference)
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+server/.env
+
+# Local Storage & Uploads
+server/storage/
+storage/
+uploads/
+tmp/
+temp/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS & Editor Files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+
+# Flutter / Dart Build Artifacts
+patient_app/.dart_tool/
+patient_app/.flutter-plugins
+patient_app/.flutter-plugins-dependencies
+patient_app/.packages
+patient_app/build/
+patient_app/.pub/
+patient_app/.pub-cache/
+
