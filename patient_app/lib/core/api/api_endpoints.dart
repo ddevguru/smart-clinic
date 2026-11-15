@@ -3,8 +3,17 @@ import 'dart:io';
 class ApiEndpoints {
   ApiEndpoints._();
 
+  // Production Live Render Backend URL
+  static const String liveBackendUrl = 'https://smart-clinic-backend-4ztd.onrender.com';
+  
+  // Set to true to target the live Render backend, or false for local development
+  static const bool useLiveBackend = true;
+
   // Android emulator connects to host machine via 10.0.2.2, physical/desktop via localhost or custom IP
   static String get baseUrl {
+    if (useLiveBackend) {
+      return '$liveBackendUrl/api/v1';
+    }
     if (Platform.isAndroid) {
       return 'http://10.0.2.2:5000/api/v1';
     }
@@ -12,6 +21,9 @@ class ApiEndpoints {
   }
 
   static String get socketUrl {
+    if (useLiveBackend) {
+      return liveBackendUrl;
+    }
     if (Platform.isAndroid) {
       return 'http://10.0.2.2:5000';
     }

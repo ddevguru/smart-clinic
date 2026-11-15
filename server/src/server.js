@@ -150,6 +150,17 @@ app.get('/api/v1/health', async (req, res) => {
   });
 });
 
+// Database Initialization / Maintenance Trigger
+app.all('/api/v1/health/init-db', async (req, res) => {
+  const secret = req.query.secret || req.body?.secret;
+  if (secret !== 'smartclinic_init_2026') {
+    return res.status(401).json({ success: false, error: 'Unauthorized database initialization request.' });
+  }
+  const force = req.query.force === 'true' || req.body?.force === true;
+  const result = await initializeDatabaseIfNeeded(force);
+  res.status(result.success ? 200 : 500).json(result);
+});
+
 // Mount Routes
 app.use('/api/v1/auth', authLimiter, authRoutes);
 app.use('/api/v1/clinic/patients', patientRoutes);

@@ -12,7 +12,9 @@ SET idle_in_transaction_session_timeout = 0;
 SET transaction_timeout = 0;
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
-SELECT pg_catalog.set_config('search_path', '', false);
+SET search_path TO public, pg_catalog;
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 SET check_function_bodies = false;
 SET xmloption = content;
 SET client_min_messages = warning;
@@ -44,7 +46,6 @@ CREATE TABLE public.abdm_consents (
 );
 
 
-ALTER TABLE public.abdm_consents OWNER TO postgres;
 
 --
 -- Name: abdm_integrations; Type: TABLE; Schema: public; Owner: postgres
@@ -67,7 +68,6 @@ CREATE TABLE public.abdm_integrations (
 );
 
 
-ALTER TABLE public.abdm_integrations OWNER TO postgres;
 
 --
 -- Name: ai_consultation_drafts; Type: TABLE; Schema: public; Owner: postgres
@@ -91,7 +91,6 @@ CREATE TABLE public.ai_consultation_drafts (
 );
 
 
-ALTER TABLE public.ai_consultation_drafts OWNER TO postgres;
 
 --
 -- Name: ai_lab_report_extractions; Type: TABLE; Schema: public; Owner: postgres
@@ -117,7 +116,6 @@ CREATE TABLE public.ai_lab_report_extractions (
 );
 
 
-ALTER TABLE public.ai_lab_report_extractions OWNER TO postgres;
 
 --
 -- Name: alembic_version; Type: TABLE; Schema: public; Owner: postgres
@@ -128,7 +126,6 @@ CREATE TABLE public.alembic_version (
 );
 
 
-ALTER TABLE public.alembic_version OWNER TO postgres;
 
 --
 -- Name: appointments; Type: TABLE; Schema: public; Owner: postgres
@@ -157,7 +154,6 @@ CREATE TABLE public.appointments (
 );
 
 
-ALTER TABLE public.appointments OWNER TO postgres;
 
 --
 -- Name: COLUMN appointments.appointment_date; Type: COMMENT; Schema: public; Owner: postgres
@@ -205,7 +201,6 @@ CREATE TABLE public.audit_logs (
 );
 
 
-ALTER TABLE public.audit_logs OWNER TO postgres;
 
 --
 -- Name: automation_job_logs; Type: TABLE; Schema: public; Owner: postgres
@@ -227,7 +222,6 @@ CREATE TABLE public.automation_job_logs (
 );
 
 
-ALTER TABLE public.automation_job_logs OWNER TO postgres;
 
 --
 -- Name: automation_settings; Type: TABLE; Schema: public; Owner: postgres
@@ -250,7 +244,6 @@ CREATE TABLE public.automation_settings (
 );
 
 
-ALTER TABLE public.automation_settings OWNER TO postgres;
 
 --
 -- Name: billing_profiles; Type: TABLE; Schema: public; Owner: postgres
@@ -274,7 +267,6 @@ CREATE TABLE public.billing_profiles (
 );
 
 
-ALTER TABLE public.billing_profiles OWNER TO postgres;
 
 --
 -- Name: clinic_branch_schedules; Type: TABLE; Schema: public; Owner: postgres
@@ -294,7 +286,6 @@ CREATE TABLE public.clinic_branch_schedules (
 );
 
 
-ALTER TABLE public.clinic_branch_schedules OWNER TO postgres;
 
 --
 -- Name: COLUMN clinic_branch_schedules.day_of_week; Type: COMMENT; Schema: public; Owner: postgres
@@ -327,7 +318,6 @@ CREATE TABLE public.clinic_branches (
 );
 
 
-ALTER TABLE public.clinic_branches OWNER TO postgres;
 
 --
 -- Name: COLUMN clinic_branches.operating_status; Type: COMMENT; Schema: public; Owner: postgres
@@ -353,7 +343,6 @@ CREATE TABLE public.clinic_correction_requests (
 );
 
 
-ALTER TABLE public.clinic_correction_requests OWNER TO postgres;
 
 --
 -- Name: COLUMN clinic_correction_requests.field_name; Type: COMMENT; Schema: public; Owner: postgres
@@ -389,7 +378,6 @@ CREATE TABLE public.clinic_documents (
 );
 
 
-ALTER TABLE public.clinic_documents OWNER TO postgres;
 
 --
 -- Name: COLUMN clinic_documents.document_type; Type: COMMENT; Schema: public; Owner: postgres
@@ -427,7 +415,6 @@ CREATE TABLE public.clinic_memberships (
 );
 
 
-ALTER TABLE public.clinic_memberships OWNER TO postgres;
 
 --
 -- Name: COLUMN clinic_memberships.status; Type: COMMENT; Schema: public; Owner: postgres
@@ -460,7 +447,6 @@ CREATE TABLE public.clinic_subscriptions (
 );
 
 
-ALTER TABLE public.clinic_subscriptions OWNER TO postgres;
 
 --
 -- Name: clinic_verification_history; Type: TABLE; Schema: public; Owner: postgres
@@ -478,7 +464,6 @@ CREATE TABLE public.clinic_verification_history (
 );
 
 
-ALTER TABLE public.clinic_verification_history OWNER TO postgres;
 
 --
 -- Name: clinics; Type: TABLE; Schema: public; Owner: postgres
@@ -509,7 +494,6 @@ CREATE TABLE public.clinics (
 );
 
 
-ALTER TABLE public.clinics OWNER TO postgres;
 
 --
 -- Name: COLUMN clinics.clinic_type; Type: COMMENT; Schema: public; Owner: postgres
@@ -556,7 +540,6 @@ CREATE TABLE public.consultation_notes (
 );
 
 
-ALTER TABLE public.consultation_notes OWNER TO postgres;
 
 --
 -- Name: COLUMN consultation_notes.vital_signs; Type: COMMENT; Schema: public; Owner: postgres
@@ -583,7 +566,6 @@ CREATE TABLE public.delay_event_logs (
 );
 
 
-ALTER TABLE public.delay_event_logs OWNER TO postgres;
 
 --
 -- Name: departure_recommendations; Type: TABLE; Schema: public; Owner: postgres
@@ -623,7 +605,6 @@ CREATE TABLE public.departure_recommendations (
 );
 
 
-ALTER TABLE public.departure_recommendations OWNER TO postgres;
 
 --
 -- Name: diagnostic_lab_orders; Type: TABLE; Schema: public; Owner: postgres
@@ -650,7 +631,6 @@ CREATE TABLE public.diagnostic_lab_orders (
 );
 
 
-ALTER TABLE public.diagnostic_lab_orders OWNER TO postgres;
 
 --
 -- Name: diagnostic_laboratories; Type: TABLE; Schema: public; Owner: postgres
@@ -670,7 +650,6 @@ CREATE TABLE public.diagnostic_laboratories (
 );
 
 
-ALTER TABLE public.diagnostic_laboratories OWNER TO postgres;
 
 --
 -- Name: doctor_credentials; Type: TABLE; Schema: public; Owner: postgres
@@ -689,7 +668,6 @@ CREATE TABLE public.doctor_credentials (
 );
 
 
-ALTER TABLE public.doctor_credentials OWNER TO postgres;
 
 --
 -- Name: COLUMN doctor_credentials.credential_type; Type: COMMENT; Schema: public; Owner: postgres
@@ -729,7 +707,6 @@ CREATE TABLE public.doctor_profiles (
 );
 
 
-ALTER TABLE public.doctor_profiles OWNER TO postgres;
 
 --
 -- Name: COLUMN doctor_profiles.qualification; Type: COMMENT; Schema: public; Owner: postgres
@@ -785,7 +762,6 @@ CREATE TABLE public.doctor_schedules (
 );
 
 
-ALTER TABLE public.doctor_schedules OWNER TO postgres;
 
 --
 -- Name: COLUMN doctor_schedules.day_of_week; Type: COMMENT; Schema: public; Owner: postgres
@@ -810,7 +786,6 @@ CREATE TABLE public.doctor_verification_history (
 );
 
 
-ALTER TABLE public.doctor_verification_history OWNER TO postgres;
 
 --
 -- Name: follow_up_records; Type: TABLE; Schema: public; Owner: postgres
@@ -831,7 +806,6 @@ CREATE TABLE public.follow_up_records (
 );
 
 
-ALTER TABLE public.follow_up_records OWNER TO postgres;
 
 --
 -- Name: healthcare_provider_profiles; Type: TABLE; Schema: public; Owner: postgres
@@ -866,7 +840,6 @@ CREATE TABLE public.healthcare_provider_profiles (
 );
 
 
-ALTER TABLE public.healthcare_provider_profiles OWNER TO postgres;
 
 --
 -- Name: healthcare_service_categories; Type: TABLE; Schema: public; Owner: postgres
@@ -886,7 +859,6 @@ CREATE TABLE public.healthcare_service_categories (
 );
 
 
-ALTER TABLE public.healthcare_service_categories OWNER TO postgres;
 
 --
 -- Name: healthcare_services; Type: TABLE; Schema: public; Owner: postgres
@@ -910,7 +882,6 @@ CREATE TABLE public.healthcare_services (
 );
 
 
-ALTER TABLE public.healthcare_services OWNER TO postgres;
 
 --
 -- Name: home_visit_bookings; Type: TABLE; Schema: public; Owner: postgres
@@ -960,7 +931,6 @@ CREATE TABLE public.home_visit_bookings (
 );
 
 
-ALTER TABLE public.home_visit_bookings OWNER TO postgres;
 
 --
 -- Name: home_visit_service_records; Type: TABLE; Schema: public; Owner: postgres
@@ -983,7 +953,6 @@ CREATE TABLE public.home_visit_service_records (
 );
 
 
-ALTER TABLE public.home_visit_service_records OWNER TO postgres;
 
 --
 -- Name: home_visit_status_history; Type: TABLE; Schema: public; Owner: postgres
@@ -1001,7 +970,6 @@ CREATE TABLE public.home_visit_status_history (
 );
 
 
-ALTER TABLE public.home_visit_status_history OWNER TO postgres;
 
 --
 -- Name: medical_documents; Type: TABLE; Schema: public; Owner: postgres
@@ -1028,7 +996,6 @@ CREATE TABLE public.medical_documents (
 );
 
 
-ALTER TABLE public.medical_documents OWNER TO postgres;
 
 --
 -- Name: medical_record_shares; Type: TABLE; Schema: public; Owner: postgres
@@ -1050,7 +1017,6 @@ CREATE TABLE public.medical_record_shares (
 );
 
 
-ALTER TABLE public.medical_record_shares OWNER TO postgres;
 
 --
 -- Name: notification_preferences; Type: TABLE; Schema: public; Owner: postgres
@@ -1071,7 +1037,6 @@ CREATE TABLE public.notification_preferences (
 );
 
 
-ALTER TABLE public.notification_preferences OWNER TO postgres;
 
 --
 -- Name: otp_verifications; Type: TABLE; Schema: public; Owner: postgres
@@ -1090,7 +1055,6 @@ CREATE TABLE public.otp_verifications (
 );
 
 
-ALTER TABLE public.otp_verifications OWNER TO postgres;
 
 --
 -- Name: COLUMN otp_verifications.phone_number; Type: COMMENT; Schema: public; Owner: postgres
@@ -1128,7 +1092,6 @@ CREATE TABLE public.patient_medical_profiles (
 );
 
 
-ALTER TABLE public.patient_medical_profiles OWNER TO postgres;
 
 --
 -- Name: patients; Type: TABLE; Schema: public; Owner: postgres
@@ -1157,7 +1120,6 @@ CREATE TABLE public.patients (
 );
 
 
-ALTER TABLE public.patients OWNER TO postgres;
 
 --
 -- Name: COLUMN patients.user_id; Type: COMMENT; Schema: public; Owner: postgres
@@ -1209,7 +1171,6 @@ CREATE TABLE public.payment_adjustments (
 );
 
 
-ALTER TABLE public.payment_adjustments OWNER TO postgres;
 
 --
 -- Name: COLUMN payment_adjustments.adjustment_type; Type: COMMENT; Schema: public; Owner: postgres
@@ -1239,7 +1200,6 @@ CREATE TABLE public.payment_records (
 );
 
 
-ALTER TABLE public.payment_records OWNER TO postgres;
 
 --
 -- Name: COLUMN payment_records.receipt_number; Type: COMMENT; Schema: public; Owner: postgres
@@ -1285,7 +1245,6 @@ CREATE TABLE public.payment_webhook_events (
 );
 
 
-ALTER TABLE public.payment_webhook_events OWNER TO postgres;
 
 --
 -- Name: permissions; Type: TABLE; Schema: public; Owner: postgres
@@ -1300,7 +1259,6 @@ CREATE TABLE public.permissions (
 );
 
 
-ALTER TABLE public.permissions OWNER TO postgres;
 
 --
 -- Name: COLUMN permissions.code; Type: COMMENT; Schema: public; Owner: postgres
@@ -1333,7 +1291,6 @@ CREATE TABLE public.pharmacy_orders (
 );
 
 
-ALTER TABLE public.pharmacy_orders OWNER TO postgres;
 
 --
 -- Name: pharmacy_partners; Type: TABLE; Schema: public; Owner: postgres
@@ -1352,7 +1309,6 @@ CREATE TABLE public.pharmacy_partners (
 );
 
 
-ALTER TABLE public.pharmacy_partners OWNER TO postgres;
 
 --
 -- Name: platform_integrations; Type: TABLE; Schema: public; Owner: postgres
@@ -1375,7 +1331,6 @@ CREATE TABLE public.platform_integrations (
 );
 
 
-ALTER TABLE public.platform_integrations OWNER TO postgres;
 
 --
 -- Name: prescription_medications; Type: TABLE; Schema: public; Owner: postgres
@@ -1401,7 +1356,6 @@ CREATE TABLE public.prescription_medications (
 );
 
 
-ALTER TABLE public.prescription_medications OWNER TO postgres;
 
 --
 -- Name: prescription_versions; Type: TABLE; Schema: public; Owner: postgres
@@ -1433,7 +1387,6 @@ CREATE TABLE public.prescription_versions (
 );
 
 
-ALTER TABLE public.prescription_versions OWNER TO postgres;
 
 --
 -- Name: prescriptions; Type: TABLE; Schema: public; Owner: postgres
@@ -1460,7 +1413,6 @@ CREATE TABLE public.prescriptions (
 );
 
 
-ALTER TABLE public.prescriptions OWNER TO postgres;
 
 --
 -- Name: provider_availability; Type: TABLE; Schema: public; Owner: postgres
@@ -1479,7 +1431,6 @@ CREATE TABLE public.provider_availability (
 );
 
 
-ALTER TABLE public.provider_availability OWNER TO postgres;
 
 --
 -- Name: provider_complaints; Type: TABLE; Schema: public; Owner: postgres
@@ -1499,7 +1450,6 @@ CREATE TABLE public.provider_complaints (
 );
 
 
-ALTER TABLE public.provider_complaints OWNER TO postgres;
 
 --
 -- Name: provider_credentials; Type: TABLE; Schema: public; Owner: postgres
@@ -1519,7 +1469,6 @@ CREATE TABLE public.provider_credentials (
 );
 
 
-ALTER TABLE public.provider_credentials OWNER TO postgres;
 
 --
 -- Name: provider_reviews; Type: TABLE; Schema: public; Owner: postgres
@@ -1541,7 +1490,6 @@ CREATE TABLE public.provider_reviews (
 );
 
 
-ALTER TABLE public.provider_reviews OWNER TO postgres;
 
 --
 -- Name: provider_service_areas; Type: TABLE; Schema: public; Owner: postgres
@@ -1560,7 +1508,6 @@ CREATE TABLE public.provider_service_areas (
 );
 
 
-ALTER TABLE public.provider_service_areas OWNER TO postgres;
 
 --
 -- Name: provider_services; Type: TABLE; Schema: public; Owner: postgres
@@ -1576,7 +1523,6 @@ CREATE TABLE public.provider_services (
 );
 
 
-ALTER TABLE public.provider_services OWNER TO postgres;
 
 --
 -- Name: queue_entries; Type: TABLE; Schema: public; Owner: postgres
@@ -1609,7 +1555,6 @@ CREATE TABLE public.queue_entries (
 );
 
 
-ALTER TABLE public.queue_entries OWNER TO postgres;
 
 --
 -- Name: COLUMN queue_entries.token_number; Type: COMMENT; Schema: public; Owner: postgres
@@ -1653,7 +1598,6 @@ CREATE TABLE public.queue_pause_history (
 );
 
 
-ALTER TABLE public.queue_pause_history OWNER TO postgres;
 
 --
 -- Name: queue_policies; Type: TABLE; Schema: public; Owner: postgres
@@ -1677,7 +1621,6 @@ CREATE TABLE public.queue_policies (
 );
 
 
-ALTER TABLE public.queue_policies OWNER TO postgres;
 
 --
 -- Name: queue_sessions; Type: TABLE; Schema: public; Owner: postgres
@@ -1700,7 +1643,6 @@ CREATE TABLE public.queue_sessions (
 );
 
 
-ALTER TABLE public.queue_sessions OWNER TO postgres;
 
 --
 -- Name: COLUMN queue_sessions.session_date; Type: COMMENT; Schema: public; Owner: postgres
@@ -1724,7 +1666,6 @@ CREATE TABLE public.queue_state_history (
 );
 
 
-ALTER TABLE public.queue_state_history OWNER TO postgres;
 
 --
 -- Name: queue_token_counters; Type: TABLE; Schema: public; Owner: postgres
@@ -1742,7 +1683,6 @@ CREATE TABLE public.queue_token_counters (
 );
 
 
-ALTER TABLE public.queue_token_counters OWNER TO postgres;
 
 --
 -- Name: record_access_logs; Type: TABLE; Schema: public; Owner: postgres
@@ -1758,7 +1698,6 @@ CREATE TABLE public.record_access_logs (
 );
 
 
-ALTER TABLE public.record_access_logs OWNER TO postgres;
 
 --
 -- Name: record_sharing_consents; Type: TABLE; Schema: public; Owner: postgres
@@ -1780,7 +1719,6 @@ CREATE TABLE public.record_sharing_consents (
 );
 
 
-ALTER TABLE public.record_sharing_consents OWNER TO postgres;
 
 --
 -- Name: role_permissions; Type: TABLE; Schema: public; Owner: postgres
@@ -1795,7 +1733,6 @@ CREATE TABLE public.role_permissions (
 );
 
 
-ALTER TABLE public.role_permissions OWNER TO postgres;
 
 --
 -- Name: roles; Type: TABLE; Schema: public; Owner: postgres
@@ -1811,7 +1748,6 @@ CREATE TABLE public.roles (
 );
 
 
-ALTER TABLE public.roles OWNER TO postgres;
 
 --
 -- Name: COLUMN roles.name; Type: COMMENT; Schema: public; Owner: postgres
@@ -1838,7 +1774,6 @@ CREATE TABLE public.subscription_audit_logs (
 );
 
 
-ALTER TABLE public.subscription_audit_logs OWNER TO postgres;
 
 --
 -- Name: subscription_invoices; Type: TABLE; Schema: public; Owner: postgres
@@ -1871,7 +1806,6 @@ CREATE TABLE public.subscription_invoices (
 );
 
 
-ALTER TABLE public.subscription_invoices OWNER TO postgres;
 
 --
 -- Name: subscription_payments; Type: TABLE; Schema: public; Owner: postgres
@@ -1897,7 +1831,6 @@ CREATE TABLE public.subscription_payments (
 );
 
 
-ALTER TABLE public.subscription_payments OWNER TO postgres;
 
 --
 -- Name: subscription_plans; Type: TABLE; Schema: public; Owner: postgres
@@ -1926,7 +1859,6 @@ CREATE TABLE public.subscription_plans (
 );
 
 
-ALTER TABLE public.subscription_plans OWNER TO postgres;
 
 --
 -- Name: teleconsultation_rooms; Type: TABLE; Schema: public; Owner: postgres
@@ -1955,7 +1887,6 @@ CREATE TABLE public.teleconsultation_rooms (
 );
 
 
-ALTER TABLE public.teleconsultation_rooms OWNER TO postgres;
 
 --
 -- Name: traffic_route_snapshots; Type: TABLE; Schema: public; Owner: postgres
@@ -1977,7 +1908,6 @@ CREATE TABLE public.traffic_route_snapshots (
 );
 
 
-ALTER TABLE public.traffic_route_snapshots OWNER TO postgres;
 
 --
 -- Name: users; Type: TABLE; Schema: public; Owner: postgres
@@ -1997,7 +1927,6 @@ CREATE TABLE public.users (
 );
 
 
-ALTER TABLE public.users OWNER TO postgres;
 
 --
 -- Name: COLUMN users.phone_number; Type: COMMENT; Schema: public; Owner: postgres
