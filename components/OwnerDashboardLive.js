@@ -29,7 +29,8 @@ import {
   ExternalLink,
   ChevronRight,
   Shield,
-  Search
+  Search,
+  LogOut
 } from 'lucide-react';
 import { tokenStorage, API_BASE_URL } from '../services/api';
 
@@ -39,8 +40,10 @@ export default function OwnerDashboardLive() {
   const [error, setError] = useState(null);
   const [successMsg, setSuccessMsg] = useState(null);
 
-  // Clinic Context
-  const [clinicId, setClinicId] = useState('99d4f519-dc8f-4f76-8dcf-0aefca9b0fdc');
+  // Dynamic Clinic & Admin Context
+  const [clinicId, setClinicId] = useState(typeof window !== 'undefined' ? (localStorage.getItem('scos_clinic_id') || '') : '');
+  const [clinicName, setClinicName] = useState(typeof window !== 'undefined' ? (localStorage.getItem('scos_clinic_name') || '') : '');
+  const [adminUser, setAdminUser] = useState(null);
   const [ownerToken, setOwnerToken] = useState(null);
 
   // Data
@@ -135,34 +138,38 @@ export default function OwnerDashboardLive() {
     is_available: true
   });
 
+  const handleLogout = () => {
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('scos_auth_token');
+      localStorage.removeItem('scos_clinic_id');
+      localStorage.removeItem('scos_clinic_name');
+      localStorage.removeItem('scos_user_name');
+      localStorage.removeItem('scos_user_role');
+      tokenStorage.clear();
+      window.location.href = '/';
+    }
+  };
+
   useEffect(() => {
     async function init() {
       setLoading(true);
       try {
         const savedToken = typeof window !== 'undefined' ? (localStorage.getItem('scos_auth_token') || tokenStorage.get()) : null;
         const savedClinicId = typeof window !== 'undefined' ? localStorage.getItem('scos_clinic_id') : null;
+        const savedClinicName = typeof window !== 'undefined' ? localStorage.getItem('scos_clinic_name') : null;
+        const savedUserName = typeof window !== 'undefined' ? localStorage.getItem('scos_user_name') : null;
 
         if (savedToken && savedClinicId) {
           tokenStorage.set(savedToken);
           setOwnerToken(savedToken);
           setClinicId(savedClinicId);
+          if (savedClinicName) setClinicName(savedClinicName);
+          if (savedUserName) setAdminUser({ full_name: savedUserName });
           await loadOwnerData(savedToken, savedClinicId);
         } else {
-          const loginRes = await fetch(`${API_BASE_URL}/auth/login-password`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ identifier: 'owner@careplus.in', password: 'Password@123' })
-          });
-          const loginData = await loginRes.json();
-          if (loginData.success) {
-            const token = loginData.data?.token || loginData.data?.access_token;
-            tokenStorage.set(token);
-            setOwnerToken(token);
-            const cid = loginData.data.memberships?.[0]?.clinic_id || clinicId;
-            setClinicId(cid);
-            await loadOwnerData(token, cid);
-          } else {
-            setError(loginData.error?.message || 'Owner login failed.');
+          // If no active session, redirect to main login page
+          if (typeof window !== 'undefined') {
+            window.location.href = '/';
           }
         }
       } catch (err) {
@@ -642,21 +649,21 @@ export default function OwnerDashboardLive() {
       <header style={{ background: '#087F79', color: '#FFFFFF', padding: '14px 28px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', boxShadow: '0 2px 8px rgba(8,127,121,0.2)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
           <div style={{ width: 40, height: 40, borderRadius: 10, background: '#FFFFFF', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#087F79', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
-            <TrendingUp size={24} />
+            <Building2 size={24} />
           </div>
           <div>
             <div style={{ fontSize: 18, fontWeight: 700, letterSpacing: -0.2 }}>
-              Clinic Owner Executive Portal
+              {ownerData?.clinic?.name || clinicName || 'Clinic Location'} — Admin Console
             </div>
             <div style={{ fontSize: 12, opacity: 0.9 }}>
-              Dr. Ramesh Gupta (Owner) • {ownerData?.clinic?.name || 'CarePlus Family Clinic'}
+              Logged in: {adminUser?.full_name || ownerData?.user?.full_name || 'Location Administrator'} (Location Scoped)
             </div>
           </div>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           <button
-            onClick={() => loadOwnerData()}
+            onClick={() => loadOwnerData(ownerToken, clinicId)}
             disabled={refreshing}
             style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'rgba(255,255,255,0.15)', border: 'none', color: '#FFFFFF', padding: '8px 14px', borderRadius: 8, fontSize: 12, fontWeight: 600, cursor: 'pointer' }}
           >
@@ -664,12 +671,14 @@ export default function OwnerDashboardLive() {
             <span>{refreshing ? 'Refreshing...' : 'Refresh KPIs'}</span>
           </button>
 
-          <a
-            href="/"
-            style={{ color: '#BFEDE5', textDecoration: 'none', fontSize: 12, fontWeight: 600, padding: '6px 12px', border: '1px solid rgba(191,237,229,0.3)', borderRadius: 6 }}
+          <button
+            onClick={handleLogout}
+            style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'rgba(239, 68, 68, 0.25)', border: '1px solid rgba(239, 68, 68, 0.5)', color: '#FFFFFF', padding: '8px 14px', borderRadius: 8, fontSize: 12, fontWeight: 600, cursor: 'pointer' }}
+            title="Sign Out to Portal"
           >
-            Portal Gateway
-          </a>
+            <LogOut size={14} />
+            <span>Sign Out</span>
+          </button>
         </div>
       </header>
 

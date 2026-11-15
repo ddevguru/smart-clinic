@@ -178,6 +178,14 @@ export default function SuperAdminLive() {
     setAuthToken(null);
     setCurrentUser(null);
     setOverview(null);
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('scos_auth_token');
+      localStorage.removeItem('scos_clinic_id');
+      localStorage.removeItem('scos_clinic_name');
+      localStorage.removeItem('scos_user_name');
+      localStorage.removeItem('scos_user_role');
+      window.location.href = '/';
+    }
   }
 
   async function fetchDashboardData(isRetry = false) {
