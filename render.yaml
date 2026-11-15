@@ -61,10 +61,6 @@ services:
       - key: PORT
         value: 3000
       - key: INTERNAL_BACKEND_URL
-        fromService:
-          type: web
-          name: smart-clinic-backend
-          property: host
+        value: https://smart-clinic-backend-4ztd.onrender.com
       - key: NEXT_PUBLIC_API_URL
         value: /api/v1
-
